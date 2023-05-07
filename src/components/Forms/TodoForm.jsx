@@ -1,9 +1,9 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Button from '../components/UI/Button';
-import { TodoContext } from '../contexts/TodoContext';
+import Button from '../../components/UI/Button';
+import { TodoContext } from '../../contexts/TodoContext';
 
 const TodoForm = ({
   variant,
@@ -12,13 +12,17 @@ const TodoForm = ({
   placeholder,
   onSubmit,
   hasButton,
-  completed
+  initialValue,
+  inputRef
 }) => {
-  const [newTodo, setNewTodo] = useState('');
+  // Az új todo és az addTodo függvény állapotának beállítása a TodoContext segítségével
+  const [newTodo, setNewTodo] = useState(initialValue || '');
   const { addTodo } = useContext(TodoContext);
 
+  // Az új todo hozzáadása az adatokhoz és az űrlap resetelése
   const handleSubmit = event => {
     event.preventDefault();
+
     const newTodoObject = {
       id: Date.now(),
       text: newTodo,
@@ -30,20 +34,26 @@ const TodoForm = ({
     setNewTodo('');
   };
 
+  // Az új todo állapotának frissítése az input mező értéke alapján
   const handleChange = event => {
     setNewTodo(event.target.value);
   };
 
+  // Az új todo kezdőértékének beállítása, ha initialValue megváltozik
+  useEffect(() => {
+    setNewTodo(initialValue || '');
+  }, [initialValue]);
+
   return (
     <Wrapper>
-      <InputGroup>
+      <InputGroup className='d-flex'>
         <Form.Control
           type='text'
           placeholder={placeholder}
-          value={newTodo}
           onChange={handleChange}
           aria-label='input'
-          className={completed ? 'input completed' : 'input'}
+          value={newTodo}
+          ref={inputRef}
         />
         {hasButton && (
           <Button
@@ -60,7 +70,6 @@ const TodoForm = ({
 
 const Wrapper = styled.section`
   .input-group {
-    display: flex;
     input {
       padding: 0.375rem 0.75rem;
       border-radius: 0.5rem;
@@ -68,12 +77,9 @@ const Wrapper = styled.section`
       border: 1px solid #eee;
       border-radius: 0;
     }
+
     button {
       padding: 0.375rem 0.75rem;
-    }
-
-    .completed {
-      text-decoration: line-through;
     }
   }
 `;

@@ -1,9 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { Form, Alert } from 'react-bootstrap';
-import Button from '../components/UI/Button';
-import { AuthContext } from '../contexts/AuthContext';
+import Button from '../UI/Button';
+import { AuthContext } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import Loading from './Loading';
+import Loading from '../Loading';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -13,6 +13,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
+  //validáció
   const validateForm = () => {
     let errors = {};
     let isValid = true;
@@ -30,6 +31,7 @@ const LoginForm = () => {
     return { errors, isValid };
   };
 
+  //bejelentkezés
   const handleSubmit = e => {
     e.preventDefault();
 

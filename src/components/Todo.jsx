@@ -1,15 +1,16 @@
-import React, { useContext, useState } from 'react';
-import Form from 'react-bootstrap/Form';
+import React, { useContext, useState, useRef } from 'react';
 import InputGroup from 'react-bootstrap/InputGroup';
-import Button from '../components/UI/Button';
 import styled from 'styled-components';
-import { Row, Col } from 'react-bootstrap';
+import Button from '../components/UI/Button';
+import { Row } from 'react-bootstrap';
 import { TodoContext } from '../contexts/TodoContext';
-import TodoForm from './TodoForm';
+import TodoForm from '../components/Forms/TodoForm';
 
 const Todo = ({ todo }) => {
   const [editing, setEditing] = useState(false);
-  const { deleteTodo, toggleTodo } = useContext(TodoContext);
+  const { deleteTodo, toggleTodo, updateTodo } = useContext(TodoContext);
+  const inputRef = useRef();
+  const [newText, setNewText] = useState(todo.text);
 
   const handleEditClick = () => {
     setEditing(true);
@@ -23,11 +24,16 @@ const Todo = ({ todo }) => {
     toggleTodo(todo.id);
   };
 
-  const handleSaveClick = newText => {
-    setEditing(false);
-    todo.text = newText;
+  const handleTextChange = e => {
+    setNewText(e.target.value);
   };
+  const handleSaveClick = () => {
+    setEditing(false);
 
+    const updatedTodoItem = { ...todo, text: inputRef.current.value };
+
+    updateTodo(updatedTodoItem);
+  };
   return (
     <Container className='mt-4'>
       <Row>
@@ -38,28 +44,38 @@ const Todo = ({ todo }) => {
             onChange={handleToggleClick}
           />
 
-          <TodoForm
-            onSubmit={handleSaveClick}
-            initialValue={todo.text}
-            variant={'primary'}
-            size={'sm'}
-            text={'MENTÉS'}
-            placeholder={todo.text}
-            completed={todo.completed}
-          />
+          {editing ? (
+            <TodoForm
+              initialValue={todo.text}
+              variant={'primary'}
+              size={'sm'}
+              text={'MENTÉS'}
+              inputRef={inputRef}
+              placeholder={todo.text}
+              onChange={handleTextChange}
+              onSubmit={handleSaveClick}
+              completed={todo.completed}
+              className='todo'
+            />
+          ) : (
+            <InputGroup.Text className={todo.completed ? 'completed' : ''}>
+              {todo.text}
+            </InputGroup.Text>
+          )}
 
           <Button
-            text={'SZERKESZTÉS'}
+            text={editing ? 'MENTÉS' : 'SZERKESZTÉS'}
             size={'sm'}
             variant={'secondary'}
             style={{ marginRight: 16, marginLeft: 16 }}
-            onClick={handleEditClick}
+            onClick={editing ? handleSaveClick : handleEditClick}
           />
           <Button
             text={'TÖRLÉS'}
             size={'sm'}
             variant={'danger'}
             onClick={handleDeleteClick}
+            className='mr-2'
           />
         </InputGroup>
       </Row>
@@ -68,8 +84,12 @@ const Todo = ({ todo }) => {
 };
 
 const Container = styled.div`
-  .button {
-    margin-right: 1rem;
+  .completed {
+    text-decoration: line-through;
+  }
+
+  .input-group-text:nth-child(2) {
+    min-width: 350px;
   }
 `;
 

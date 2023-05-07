@@ -1,5 +1,5 @@
 import React from 'react';
-import { LoginForm } from '../components';
+import LoginForm from './Forms/LoginForm';
 
 const CardContent = () => {
   return (

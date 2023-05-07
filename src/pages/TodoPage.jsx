@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Header, TodoForm, Button, Todo } from '../components';
+import { Header, Todo, Search } from '../components';
+import Button from '../components/UI/Button';
+import TodoForm from '../components/Forms/TodoForm';
 import styled from 'styled-components';
 import Container from 'react-bootstrap/Container';
 import { Navbar } from 'react-bootstrap';
@@ -11,14 +13,16 @@ import { useNavigate } from 'react-router-dom';
 
 const TodoPage = () => {
   const { logout } = useContext(AuthContext);
-  const navigate = useNavigate();
   const { addTodo, todos } = useContext(TodoContext);
   const [todoText, setTodoText] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem('todos', JSON.stringify(todos));
   }, [todos]);
 
+  //kijelentkezés
   const handleLogout = () => {
     logout();
     navigate('/');
@@ -30,15 +34,24 @@ const TodoPage = () => {
       text: newTodo.text,
       completed: false
     };
-    console.log(newTodo);
     addTodo(newTodoObject);
 
     setTodoText('');
   };
 
+  // Input változás kezelése
   const handleInputChange = e => {
     setTodoText(e.target.value);
   };
+  const handleSearch = value => {
+    setSearchTerm(value);
+  };
+
+  //keresés
+  const filteredTodos = todos.filter(todo =>
+    todo.text.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       <Navbar bg='dark' className='justify-content-end pe-4'>
@@ -64,15 +77,32 @@ const TodoPage = () => {
                 text={'Hozzáadás'}
                 onSubmit={handleSubmit}
                 value={todoText}
-                onChange={handleInputChange}
                 placeholder={'Új teendő hozzáadása'}
                 hasButton={true}
+                onChange={handleInputChange}
               />
             </Col>
           </Row>
-          {todos.map(todo => (
-            <Todo key={todo.id} todo={todo} />
-          ))}
+          <Row className='mt-3 justify-content-center' lg={3}>
+            {todos.length > 0 && (
+              <Row>
+                <Search value={searchTerm} onChange={handleSearch} />
+              </Row>
+            )}
+          </Row>
+
+          {filteredTodos.length > 0
+            ? filteredTodos.map(todo => <Todo key={todo.id} todo={todo} />)
+            : searchTerm === '' && (
+                <Row className='justify-content-center'>
+                  <p className='text-white'>Nincsenek teendők</p>
+                </Row>
+              )}
+          {filteredTodos.length === 0 && searchTerm !== '' && (
+            <Row className='justify-content-center'>
+              <p className='text-white'>Nincs találat</p>
+            </Row>
+          )}
         </Container>
       </Wrapper>
     </>

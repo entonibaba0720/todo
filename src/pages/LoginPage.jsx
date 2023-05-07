@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardContent } from '../components';
+import CardContent from '../components/CardContent';
 import { Col, Row, Container, Card } from 'react-bootstrap';
 
 const LoginPage = () => {

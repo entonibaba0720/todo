@@ -1,10 +1,5 @@
 import React, { useContext } from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate
-} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import TodoPage from './pages/TodoPage';
