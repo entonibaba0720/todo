@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthContext } from './contexts/AuthContext';
 import LoginPage from './pages/LoginPage';
 import TodoPage from './pages/TodoPage';
+import Error from './pages/Error';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         {/* Public routes */}
         <Route exact path='/' element={<LoginPage />} />
+        <Route path='*' element={<Error />} />
         {/* Protected routes */}
         <Route
           path='/todo'
